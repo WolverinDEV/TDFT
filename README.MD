@@ -31,7 +31,7 @@ Do you have any more ideas to test? May consider to contribute :)
 :heavy_multiplication_x: := Currently not supported  
 
 ## Features to come
-[ ] GUI
-[ ] MacOS and Windows support (Currently not supported due to the `cd` command)
-[ ] Fully implement H03
-[ ] Releases
+[ ] GUI  
+[ ] MacOS and Windows support (Currently not supported due to the `cd` command)  
+[ ] Fully implement H03  
+[ ] Releases  
