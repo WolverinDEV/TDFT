@@ -1,0 +1,6 @@
+src/main/cpp/*.so
+src/main/cpp/*.o
+src/main/cpp/*.lib
+src/main/cpp/*.dll
+cmake-build-*
+.idea
