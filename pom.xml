@@ -12,7 +12,7 @@
     <modules>
         <module>core</module>
         <module>api</module>
-        <module>tests/h3</module>
+        <module>tests</module>
     </modules>
 
     <properties>
