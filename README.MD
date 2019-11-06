@@ -22,7 +22,7 @@ Do you have any more ideas to test? May consider to contribute :)
 | H00 | | :heavy_multiplication_x: | |
 | H01 | | :heavy_multiplication_x: | |
 | H02 | | :heavy_multiplication_x: | |
-| H03 | Pascals Triangle | :heavy_plus_sign: | |
+| H03 | Pascals Triangle | :heavy_plus_sign: | Already checking for method,  but not yet for their functionality (only for `faculty`) |
 |  | Heritage Tests | :heavy_multiplication_x: | |
 | H04 | | :heavy_multiplication_x: | |
   
