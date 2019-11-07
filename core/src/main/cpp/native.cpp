@@ -1,9 +1,14 @@
 #include "./native.h"
 #include <string>
 #include <cassert>
-#include <experimental/filesystem>
 
+#ifdef WIN32
+#include <filesystem>
+namespace fs = std::filesystem;
+#else
+#include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
+#endif
 
 #ifdef __cplusplus
 extern "C" {

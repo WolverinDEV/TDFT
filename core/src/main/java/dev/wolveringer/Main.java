@@ -1,10 +1,12 @@
 package dev.wolveringer;
 
+import dev.wolveringer.tdft.Native;
 import dev.wolveringer.tdft.TestExecutor;
 import dev.wolveringer.tdft.TestResult;
 import dev.wolveringer.tdft.unit.PluginManager;
 import dev.wolveringer.tdft.source.EclipseProjectSource;
 import dev.wolveringer.tdft.source.TestSource;
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.impl.SimpleLogger;
 
 import java.io.File;
@@ -17,10 +19,11 @@ public class Main {
         System.setProperty(SimpleLogger.SHOW_THREAD_NAME_KEY, "false");
         System.setProperty("log4j.logger.org.xeustechnologies.*", "OFF");
 
-        System.load(new File("core/src/main/resources/libnative.so").getAbsolutePath());
+        Native.setup();
 
 
-        TestSource source = new EclipseProjectSource("/home/wolverindev/Downloads/H03_Hadenfeldt_Markus.zip");
+        //TestSource source = new EclipseProjectSource("/home/wolverindev/Downloads/H03_Hadenfeldt_Markus.zip");
+        TestSource source = new EclipseProjectSource("C:\\Studium\\Semester 1\\FOP\\Abgaben\\H03_Hadenfeldt_Markus.zip");
         PluginManager unitManager = new PluginManager();
 
         unitManager.registerPlugin(new File("tests/h3/target/h3-1.0.jar"));
