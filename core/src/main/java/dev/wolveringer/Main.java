@@ -6,12 +6,18 @@ import dev.wolveringer.tdft.TestResult;
 import dev.wolveringer.tdft.unit.PluginManager;
 import dev.wolveringer.tdft.source.EclipseProjectSource;
 import dev.wolveringer.tdft.source.TestSource;
+import org.apache.commons.cli.*;
 import org.apache.commons.lang3.SystemUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.impl.SimpleLogger;
 
 import java.io.File;
+import java.util.Arrays;
 
 public class Main {
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+
     public static void main(String[] args) throws Exception {
         System.setProperty(SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "info");
         System.setProperty(SimpleLogger.SHOW_LOG_NAME_KEY, "false");
@@ -21,12 +27,48 @@ public class Main {
 
         Native.setup();
 
+        Options cliOptions = new Options();
 
-        //TestSource source = new EclipseProjectSource("/home/wolverindev/Downloads/H03_Hadenfeldt_Markus.zip");
-        TestSource source = new EclipseProjectSource("C:\\Studium\\Semester 1\\FOP\\Abgaben\\H03_Hadenfeldt_Markus.zip");
+        {
+            cliOptions.addOption(
+                    Option.builder("p")
+                            .longOpt("project")
+                            .hasArg()
+                            .required()
+                            .desc("The path to the exported Eclipse project you want to test")
+                    .build()
+            );
+
+            cliOptions.addOption(
+                    Option.builder("t")
+                            .longOpt("plugin")
+                            .optionalArg(true)
+                            .hasArgs()
+                            .desc("Specify plugins or full directories where the tester loads his tests from")
+                            .build()
+            );
+        }
+
+        CommandLineParser parser = new DefaultParser();
+        HelpFormatter formatter = new HelpFormatter();
+        CommandLine cmd = null;
+
+        try {
+            cmd = parser.parse(cliOptions, args);
+        } catch (ParseException e) {
+            System.out.println(e.getMessage());
+            formatter.printHelp("TDFT", cliOptions);
+
+            System.exit(1);
+        }
+
+        TestSource source = new EclipseProjectSource(cmd.getOptionValue("project"));
         PluginManager unitManager = new PluginManager();
 
-        unitManager.registerPlugin(new File("tests/h3/target/h3-1.0.jar"));
+        for(String path : cmd.getOptionValues("plugin")) {
+            logger.info("Adding plugin/plugin directory " + path);
+            unitManager.registerPlugin(new File(path));
+        }
 
         TestExecutor executor = new TestExecutor(source, unitManager);
         executor.initialize();
