@@ -25,25 +25,30 @@ public class PascalsTriangle extends TestUnit  {
 
     @Override
     protected void registerTests(TestContext ctx) {
+        this.setupMethodTests();
         this.registerTest(testFaculty, "faculty algo test");
+    }
+
+    private void setupMethodTests() {
+        this.registerTest(context -> {
+            context.getHelper()
+                    .resolveMethod("h3.PascalsTriangle", "faculty", Modifier.PUBLIC, int.class, int.class);
+        }, "test method availability for faculty");
 
         this.registerTest(context -> {
-            final Helpers helpers = context.getHelper();
+            context.getHelper()
+                    .resolveMethod("h3.PascalsTriangle", "binomialCoefficient", Modifier.PUBLIC, int.class, int.class, int.class);
+        }, "test method availability for binomialCoefficient");
 
-            Class<?> pt = helpers.resolveClass("h3.PascalsTriangle");
+        this.registerTest(context -> {
+            context.getHelper()
+                    .resolveMethod("h3.PascalsTriangle", "triangleOfBinCoeff", Modifier.PUBLIC, int[].class, int.class);
+        }, "test method availability for triangleOfBinCoeff");
 
-            /* test for faculty method */
-            helpers.resolveMethod(pt, "faculty", Modifier.PUBLIC, int.class, int.class);
-
-            /* test for binomialCoefficient method */
-            helpers.resolveMethod(pt, "binomialCoefficient", Modifier.PUBLIC, int.class, int.class, int.class);
-
-            /* test for triangleOfBinCoeff method */
-            helpers.resolveMethod(pt, "triangleOfBinCoeff", Modifier.PUBLIC, int[].class, int.class);
-
-            /* test for faculty method */
-            helpers.resolveMethod(pt, "pascalsTriangle", Modifier.PUBLIC, int[].class, int.class);
-        }, "class methods available");
+        this.registerTest(context -> {
+            context.getHelper()
+                    .resolveMethod("h3.PascalsTriangle", "pascalsTriangle", Modifier.PUBLIC, int[].class, int.class);
+        }, "test method availability for pascalsTriangle");
     }
 
     private TestSuite testFaculty = context -> {

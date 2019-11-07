@@ -12,6 +12,9 @@ public interface Helpers {
     <T> T createInstance(Class<T> klass, Object... arguments);
 
     <T> Method resolveMethod(Class<T> klass, String name, int modifiers, Class<?> result, Class<?>... arguments);
+    default <T> Method resolveMethod(String className, String name, int modifiers, Class<?> result, Class<?>... arguments) {
+        return resolveMethod(resolveClass(className), name, modifiers, result, arguments);
+    }
     default <T> Method resolveMethod(T obj, String name, int modifiers, Class<?> result, Class<?>... arguments) {
         return resolveMethod(obj.getClass(), name, modifiers, result, arguments);
     }
