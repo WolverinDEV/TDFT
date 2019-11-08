@@ -74,6 +74,22 @@ public class GuiMain {
                             .desc("Specify plugins or full directories where the tester loads his tests from")
                             .build()
             );
+
+            cliOptions.addOption(
+                    Option.builder("s")
+                            .longOpt("printStackTrace")
+                            .optionalArg(true)
+                            .desc("Optionally print the stack trace when an error occurs")
+                            .build()
+            );
+
+            cliOptions.addOption(
+                    Option.builder("a")
+                            .longOpt("abortOnFailure")
+                            .optionalArg(true)
+                            .desc("Abort all tests on failure")
+                            .build()
+            );
         }
 
         CommandLineParser parser = new DefaultParser();
@@ -130,8 +146,13 @@ public class GuiMain {
 
         if(cmd.hasOption("project"))
             mainForm.setProjectFile(new File(cmd.getOptionValue("project")));
+
         if(cmd.hasOption("plugin"))
             for(String plugin : cmd.getOptionValues("plugin"))
                 mainForm.addPlugin(new File(plugin));
+
+        mainForm.getOptions().setExitOnFailure(cmd.hasOption("abortOnFailure"));
+        mainForm.getOptions().setFullStackTrace(cmd.hasOption("printStackTrace"));
+        mainForm.syncOptions();
     }
 }

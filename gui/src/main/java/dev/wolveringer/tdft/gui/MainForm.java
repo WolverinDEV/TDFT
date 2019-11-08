@@ -43,7 +43,7 @@ public class MainForm {
     private JLabel labelTestFeedback;
 
     private EclipseProjectSource projectSource;
-    private TestOptions options = new TestOptions();
+    @Getter private TestOptions options = new TestOptions();
     private PluginManager pluginManager = new PluginManager();
 
     public MainForm() {
@@ -157,12 +157,17 @@ public class MainForm {
         this.exitTestsOnFailitureCheckBox.addItemListener(e -> {
             this.options.setExitOnFailure(this.exitTestsOnFailitureCheckBox.isSelected());
         });
-        this.exitTestsOnFailitureCheckBox.setSelected(this.options.isExitOnFailure());
 
         this.printFullStackTraceCheckBox.addItemListener(e -> {
             this.options.setFullStackTrace(this.printFullStackTraceCheckBox.isSelected());
         });
+
+        this.syncOptions();
+    }
+
+    public void syncOptions() {
         this.printFullStackTraceCheckBox.setSelected(this.options.isFullStackTrace());
+        this.exitTestsOnFailitureCheckBox.setSelected(this.options.isExitOnFailure());
     }
 
     public void setProjectFile(File target) {
