@@ -7,7 +7,11 @@ import java.lang.reflect.Method;
 import java.util.Comparator;
 
 public interface Helpers {
-    <T> Class<T> resolveClass(String path);
+    default <T> Class<T> resolveClass(String path) {
+        return resolveClass(path, -1);
+    }
+
+    <T> Class<T> resolveClass(String path, int modifiers);
 
     <T> T createInstance(String klass, Object... arguments);
     <T> T createInstance(Class<T> klass, Object... arguments);

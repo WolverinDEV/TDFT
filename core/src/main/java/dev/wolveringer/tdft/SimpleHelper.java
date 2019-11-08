@@ -21,12 +21,18 @@ class SimpleHelper implements Helpers {
     private final TestContext context;
 
     @Override
-    public <T> Class<T> resolveClass(@NonNull String path) {
+    public <T> Class<T> resolveClass(@NonNull String path, int modifiers) {
+        Class<T> klass;
         try {
-            return (Class<T>) Class.forName(path, true, context.getClassLoader());
+            klass = (Class<T>) Class.forName(path, true, context.getClassLoader());
         } catch(Exception ex) {
             throw new RuntimeException("Failed to resolve class " + path + ". Maybe missing?", ex);
         }
+
+        if(modifiers >= 0) {
+            Validate.isTrue((klass.getModifiers() & modifiers) == modifiers, "Required modifiers for class " + path + " are not given (required: " + Modifier.toString(modifiers) + "; given: " + Modifier.toString(klass.getModifiers()) + ")");
+        }
+        return klass;
     }
 
     @Override
