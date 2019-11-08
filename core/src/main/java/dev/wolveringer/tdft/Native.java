@@ -1,10 +1,13 @@
 package dev.wolveringer.tdft;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 
@@ -32,9 +35,22 @@ public class Native {
 
             try {
                 System.load(new File("core/src/main/resources/" + filename).getAbsolutePath()); //Debug path
-            } catch(Exception ex1) {
-                URL resUri = Native.class.getResource("resources/" + filename);
-                System.out.println(resUri);
+            } catch(UnsatisfiedLinkError ex1) {
+                InputStream nativeIs = Native.class.getResourceAsStream("/resources/" + filename);
+                if(nativeIs == null)
+                    throw ex1;
+
+                logger.debug("Found native addon within the jar resources. Extracting and loading it.");
+
+                File file = File.createTempFile("_tdft_native", "");
+                if(file.exists())
+                    file.delete();
+                Validate.isTrue(file.createNewFile(), "Failed to create new file");
+                file.deleteOnExit();
+
+                FileUtils.copyToFile(nativeIs, file);
+
+                System.load(file.getAbsolutePath());
             }
             supported = true;
         } catch(Exception ex) {

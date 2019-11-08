@@ -23,7 +23,7 @@ public class TestResult {
     public boolean successfully() { return this.getFailedTests() == 0 && this.getTestsSkipped() == 0; }
 
     private static String formantPer(int a, int b, boolean withOf) {
-        float p = (float) (a * 100) / b;
+        float p = (float) (a * 100) / (b == 0 ? 1 : b);
         DecimalFormat decimalFormat = new DecimalFormat("#0.0");
         String app = "(" + decimalFormat.format(p);
         app = StringUtils.leftPad(app, 7, ' ');

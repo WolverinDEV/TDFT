@@ -8,23 +8,27 @@ import dev.wolveringer.tdft.unit.PluginManager;
 import dev.wolveringer.tdft.source.EclipseProjectSource;
 import dev.wolveringer.tdft.source.TestSource;
 import org.apache.commons.cli.*;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.impl.SimpleLogger;
 
 import java.io.File;
-import java.text.DecimalFormat;
 
 public class Main {
     private static final Logger logger;
     static {
-        System.setProperty(SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "info");
-        //System.setProperty(SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE");
-        System.setProperty(SimpleLogger.SHOW_LOG_NAME_KEY, "false");
-        System.setProperty(SimpleLogger.SHOW_SHORT_LOG_NAME_KEY, "false");
-        System.setProperty(SimpleLogger.SHOW_THREAD_NAME_KEY, "false");
-        System.setProperty("log4j.logger.org.xeustechnologies.*", "OFF");
+        String className = Main.class.getName().replace('.', '/');
+        String classJar = Main.class.getResource("/" + className + ".class").toString();
+        if(!classJar.startsWith("jar:")) {
+            //Debugging stuff
+
+            System.setProperty(SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "info");
+            //System.setProperty(SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE");
+            System.setProperty(SimpleLogger.SHOW_LOG_NAME_KEY, "false");
+            System.setProperty(SimpleLogger.SHOW_SHORT_LOG_NAME_KEY, "false");
+            System.setProperty(SimpleLogger.SHOW_THREAD_NAME_KEY, "false");
+            System.setProperty("log4j.logger.org.xeustechnologies.*", "OFF");
+        }
 
         logger = LoggerFactory.getLogger(Main.class);
     }
@@ -75,9 +79,11 @@ public class Main {
 
         PluginManager unitManager = new PluginManager();
 
-        for(String path : cmd.getOptionValues("plugin")) {
-            logger.info("Adding plugin/plugin directory " + path);
-            unitManager.registerPlugin(new File(path));
+        if(cmd.hasOption("plugin")) {
+            for(String path : cmd.getOptionValues("plugin")) {
+                logger.info("Adding plugin/plugin directory " + path);
+                unitManager.registerPlugin(new File(path));
+            }
         }
 
         TestExecutor executor = new TestExecutor(source, unitManager, options);
@@ -86,6 +92,7 @@ public class Main {
         TestResult result = executor.execute();
         result.print(System.out::println);
 
+        System.out.println();
         if(!result.successfully()) {
             System.out.println("Test wasn't successfully!");
             System.out.println("I recommend to lookup your code and fix some bugs :)");
