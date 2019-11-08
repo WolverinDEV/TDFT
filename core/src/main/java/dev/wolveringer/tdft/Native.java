@@ -5,6 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URL;
 
 public class Native {
     private static final Logger logger = LoggerFactory.getLogger(Native.class);
@@ -18,13 +20,21 @@ public class Native {
 
     public static void setup() {
         try {
+            String filename;
             if(SystemUtils.IS_OS_WINDOWS) {
                 String arch      = System.getenv("PROCESSOR_ARCHITECTURE");
                 String wow64Arch = System.getenv("PROCESSOR_ARCHITEW6432");
                 boolean isOS64 = arch.endsWith("64") || (wow64Arch != null && wow64Arch.endsWith("64"));
-                System.load(new File("core/src/main/resources/native_" + (isOS64 ? "64" : "32") + ".dll").getAbsolutePath());
+                filename = "native_" + (isOS64 ? "64" : "32") + ".dll";
             } else {
-                System.load(new File("core/src/main/resources/libnative.so").getAbsolutePath());
+                filename = "libnative.so";
+            }
+
+            try {
+                System.load(new File("core/src/main/resources/" + filename).getAbsolutePath()); //Debug path
+            } catch(Exception ex1) {
+                URL resUri = Native.class.getResource("resources/" + filename);
+                System.out.println(resUri);
             }
             supported = true;
         } catch(Exception ex) {

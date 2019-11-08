@@ -26,7 +26,7 @@ public abstract class TestUnit {
     }
 
     private final String name;
-    private Set<Test> testSuites;
+    private List<Test> testSuites;
 
     public abstract boolean executable(TestSource source);
     protected abstract void registerTests(TestContext context);
@@ -34,7 +34,7 @@ public abstract class TestUnit {
     public void initialize(TestContext context) {
         Validate.isTrue(this.testSuites == null, "Unit already initialized");
 
-        this.testSuites = new HashSet<>();
+        this.testSuites = new ArrayList<>();
         this.registerTests(context);
     }
 
@@ -64,6 +64,7 @@ public abstract class TestUnit {
         Map<String, TestState> executedTests = new HashMap<>();
 
         int testsTotal = pendingTests.size(), testsExecuted = 0, testsSucceeded = 0, testsSkipped = 0;
+        gloop:
         while(!pendingTests.isEmpty()) {
             final int testCount = testsExecuted;
 
@@ -98,7 +99,7 @@ public abstract class TestUnit {
                 if(test.getState() == TestState.SUCCEEDED)
                     testsSucceeded++;
                 else if(context.getOptions().isExitOnFailure()) {
-                    break;
+                    break gloop;
                 }
             }
 

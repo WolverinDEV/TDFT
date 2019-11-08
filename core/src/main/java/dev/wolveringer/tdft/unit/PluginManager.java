@@ -15,15 +15,16 @@ import java.util.stream.Stream;
 public class PluginManager {
     private static final Logger logger = LoggerFactory.getLogger(PluginManager.class);
 
-    private List<TestPlugin> pluginInstances;
-    private Set<File> pluginFiles = new HashSet<>();
+    private Map<File, TestPlugin> plugins = new HashMap<>();
 
     public Set<File> getPluginFiles() {
-        return Collections.unmodifiableSet(this.pluginFiles);
+        return Collections.unmodifiableSet(this.plugins.keySet());
     }
 
     public void registerPlugin(File path) {
-        Validate.isTrue(this.pluginInstances == null, "Plugin manager has already been initialized!");
+        if(this.plugins.containsKey(path))
+            return;
+
         if(path.isFile()) {
             Validate.isTrue(path.canRead(), "Target file does not exists or isn't readable");
             Validate.isTrue(path.getName().endsWith(".jar"), "Target file must be a jar file");
@@ -39,42 +40,64 @@ public class PluginManager {
                 if(f.isFile() && f.getName().endsWith(".jar"))
                     this.registerPlugin(f);
             }
+            return;
         }
-        this.pluginFiles.add(path);
+
+        this.plugins.put(path, null);
     }
 
-    public boolean initialized() {
-        return this.pluginInstances != null;
+    public void unregisterPlugin(Plugin p) {
+        Optional<Map.Entry<File, TestPlugin>> plugin = this.plugins.entrySet().stream().filter(e -> e.getValue() != null && e.getValue().getInstance() == p).findFirst();
+        if(!plugin.isPresent())
+            return;
+
+        this.disablePlugin(plugin.get().getKey());
+        this.plugins.remove(plugin.get().getKey());
     }
 
-    public void initialize() {
-        Validate.isTrue(this.pluginInstances == null, "Plugin manager has already been initialized!");
-        this.pluginInstances = new ArrayList<>();
+    public void enableAllPlugins() {
+        logger.debug("Enabling " + this.plugins.entrySet().stream().filter(e -> e.getValue() == null).count() + " new plugins.");
+        for(Map.Entry<File, TestPlugin> plData : this.plugins.entrySet()) {
+            if(plData.getValue() == null)
+                this.enablePlugin(plData.getKey());
 
-        logger.debug("Loading " + this.pluginFiles.size() + " plugins.");
-        for(File f : this.pluginFiles) {
-            logger.trace("Loading plugin " + f);
-            try {
-                TestPlugin plugin = new TestPlugin(f, this.getClass().getClassLoader());
-                plugin.load();
-                this.pluginInstances.add(plugin);
-            } catch (Exception ex) {
-                logger.error("Failed to load plugin " + f + ". Ignoring test.", ex);
-            }
         }
-        logger.debug("Enabeling test plugins");
-        for(TestPlugin tp : new ArrayList<>(this.pluginInstances)) {
-            try {
-                tp.getInstance().onEnable();
-            } catch(Exception ex) {
-                logger.warn("Failed to enable plugin " + tp.getInstance().getName(), ex);
-                this.pluginInstances.remove(tp);
-            }
+
+        List<TestPlugin> plugins = this.plugins.entrySet().stream().filter(e -> e.getValue() != null).map(Map.Entry::getValue).collect(Collectors.toList());
+        logger.debug("Loaded " + this.plugins.size() + " plugins and " + plugins.stream().mapToInt(e -> e.getInstance().getRegisteredTestUnits().size()).sum() + " test units successfully.");
+    }
+
+    public boolean enablePlugin(File pluginFile) {
+        Optional<Map.Entry<File, TestPlugin>> pl = this.plugins.entrySet().stream().filter(e -> e.getKey() == pluginFile).findFirst();
+        Validate.isTrue(pl.isPresent(), "Plugin not registered!");
+        if(pl.get().getValue() != null)
+            return true;
+
+        logger.trace("Loading plugin " + pluginFile);
+        try {
+            TestPlugin plugin = new TestPlugin(pluginFile, this.getClass().getClassLoader());
+            plugin.load();
+            plugin.getInstance().onEnable();
+            this.plugins.put(pluginFile, plugin);
+        } catch (Exception ex) {
+            logger.error("Failed to load plugin " + pluginFile + ". Ignoring test.", ex);
+            return false;
         }
-        logger.debug("Loaded " + this.pluginInstances.size() + " plugins and " + this.pluginInstances.stream().mapToInt(e -> e.getInstance().getRegisteredTestUnits().size()).sum() + " test units successfully.");
+        return true;
+    }
+
+    public boolean disablePlugin(File pluginFile) {
+        Optional<Map.Entry<File, TestPlugin>> pl = this.plugins.entrySet().stream().filter(e -> e.getKey() == pluginFile).findFirst();
+        Validate.isTrue(pl.isPresent(), "Plugin not registered!");
+
+        TestPlugin plugin = pl.get().getValue();
+        plugin.getInstance().onDisable();
+
+        this.plugins.put(pluginFile, null);
+        return true;
     }
 
     public List<Plugin> loadedPlugins() {
-        return this.pluginInstances.stream().map(TestPlugin::getInstance).collect(Collectors.toList());
+        return this.plugins.values().stream().filter(Objects::nonNull).map(TestPlugin::getInstance).collect(Collectors.toList());
     }
 }

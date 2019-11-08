@@ -62,7 +62,7 @@ public class Main {
             cmd = parser.parse(cliOptions, args);
         } catch (ParseException e) {
             System.out.println(e.getMessage());
-            formatter.printHelp("TDFT", cliOptions);
+            formatter.printHelp("TDFT-Cli", cliOptions);
 
             System.exit(1);
         }

@@ -36,7 +36,6 @@ public class Main {
                             .longOpt("project")
                             .optionalArg(true)
                             .hasArg()
-                            .required()
                             .desc("The path to the exported Eclipse project you want to test")
                             .build()
             );
@@ -76,6 +75,6 @@ public class Main {
             mainForm.setProjectFile(new File(cmd.getOptionValue("project")));
         if(cmd.hasOption("plugin"))
             for(String plugin : cmd.getOptionValues("plugin"))
-                mainForm.addPlugin(plugin);
+                mainForm.addPlugin(new File(plugin));
     }
 }

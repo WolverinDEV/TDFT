@@ -9,12 +9,10 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Getter
@@ -77,10 +75,9 @@ public class TestExecutor {
             this.testLogger = new SimpleLogger(this);
 
         try {
-            if(!this.unitManager.initialized())
-                this.unitManager.initialize();
+            this.unitManager.enableAllPlugins();
         } catch (Exception ex) {
-            throw new Exception("failed to initialize test unit manager", ex);
+            throw new Exception("failed to enable all plugins", ex);
         }
 
         try {
@@ -129,6 +126,8 @@ public class TestExecutor {
 
         List<TestUnit> registeredTestUnits = new ArrayList<>();
         List<TestUnit> availableTestUnits = new ArrayList<>();
+
+        this.testLogger.info("Loading tests...");
         for(Plugin tp : this.unitManager.loadedPlugins()) {
             logger.debug("Loading units for plugin " + tp.getName());
 
@@ -148,15 +147,21 @@ public class TestExecutor {
                         testsAvailable += unit.getTestSuites().size();
                     } catch(Exception ex) {
                         unit.cleanup();
+                        this.testLogger.error("Failed to initialize test unit " + unit.getName() + ". Ignoring unit.");
                         logger.error("Failed to initialize test unit " + unit.getName() + ". Ignoring unit.", ex);
                     }
                 } else {
+                    this.testLogger.debug("Skipping test unit " + unit.getName());
                     logger.trace("Skipping test unit " + unit.getName());
                 }
             }
 
             logger.debug("Plugin " + tp.getName() + " scheduled " + (testUnitsAvailable - testUnits) + " test units with " + (testsAvailable - testCount) + " tests.");
+            this.testLogger.info("Plugin " + tp.getName() + " scheduled " + (testUnitsAvailable - testUnits) + " test units with " + (testsAvailable - testCount) + " tests");
         }
+
+        this.testLogger.info("Executing " + testsAvailable + " tests.");
+        long begin = System.currentTimeMillis();
 
         logger.info("Found " + testUnitsAvailable + " test units with " + testsAvailable + " tests. Start testing....");
         for(TestUnit test : availableTestUnits) {
@@ -171,7 +176,7 @@ public class TestExecutor {
             testsExecuted += result.getTestsExecuted();
             testsSkipped += result.getTestsSkipped();
             testsSucceeded += result.getTestsSucceeded();
-            if(result.getTestsExecuted() - result.getTestsSucceeded() > 0) {
+            if((result.getTestsExecuted() - result.getTestsSucceeded()) > 0) {
                 if(this.getOptions().isExitOnFailure()) {
                     logger.info("Aborting tests because test unit " + test.getName() + " has some failed tests.");
                     break;
@@ -187,6 +192,9 @@ public class TestExecutor {
 
         for(TestUnit unit : registeredTestUnits)
             unit.cleanup();
+
+        this.testLogger.info("Executed " + testsExecuted + " tests in " + (System.currentTimeMillis() - begin) + "ms.");
+        long now = System.currentTimeMillis();
 
         return new TestResult(
                 testUnitsTotal,
