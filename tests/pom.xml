@@ -14,6 +14,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>h3</module>
+        <module>h4</module>
     </modules>
 
     <properties>
