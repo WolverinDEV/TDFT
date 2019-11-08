@@ -16,11 +16,14 @@ public class Test {
     @Setter
     private TestState state = TestState.PENDING;
 
-    public void requireTest(String id) {
+    public Test requireTest(String id) {
         this.requiredTests.add(id);
+        return this;
     }
 
-    public void requireTest(Test other) {
-        this.requireTest(other.id);
+    public Test requireTest(Test... other) {
+        for(Test test : other)
+            this.requireTest(test.id);
+        return this;
     }
 }

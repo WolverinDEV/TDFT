@@ -1,4 +1,4 @@
-package dev.wolveringer.tdft.tests.h3;
+package dev.wolveringer.tdft.h3;
 
 import dev.wolveringer.tdft.plugin.Plugin;
 

@@ -25,4 +25,10 @@ public interface TestContext {
      *         Usually the supplied project to test
      */
     TestSource getSource();
+
+    /**
+     * @return The options the tests should respect.
+     *         {@see TestOptions} for more detail
+     */
+    TestOptions getOptions();
 }

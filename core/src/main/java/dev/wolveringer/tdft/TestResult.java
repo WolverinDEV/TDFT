@@ -8,13 +8,9 @@ import lombok.ToString;
 @Getter
 @ToString
 public class TestResult {
-    private final int testsRegistered;
-    private final int testsTotal;
-    private final int testsExecuted;
-    private final int testsPassed;
+    private final int testUnitsTotal, testUnitsAvailable;
+    private final int testsAvailable, testsExecuted, testsSucceeded, testsSkipped;
 
-    public int getFailedTests() { return this.testsExecuted - this.testsPassed; }
-    public int getSkippedTests() { return this.testsTotal - this.testsExecuted; }
-
-    public boolean successfully() { return this.getFailedTests() == 0; }
+    public int getFailedTests() { return this.testsExecuted - this.testsSucceeded - this.testsSkipped; }
+    public boolean successfully() { return this.getFailedTests() == 0 && this.getTestsSkipped() == 0; }
 }

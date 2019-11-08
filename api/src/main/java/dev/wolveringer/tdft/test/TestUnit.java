@@ -16,6 +16,15 @@ import lombok.NonNull;
 @Getter
 @RequiredArgsConstructor
 public abstract class TestUnit {
+    @Getter
+    @RequiredArgsConstructor
+    public static class Result {
+        private final int testCount;
+        private final int testsExecuted;
+        private final int testsSucceeded;
+        private final int testsSkipped;
+    }
+
     private final String name;
     private Set<Test> testSuites;
 
@@ -46,16 +55,17 @@ public abstract class TestUnit {
         return result;
     }
 
-    public final boolean executeTests(@NonNull TestContext context) {
+    public final Result executeTests(@NonNull TestContext context) {
         TestLogger logger = context.getLogger();
         logger.pushContext(this.name);
         logger.info("Executing %d tests in this unit.", this.testSuites.size());
 
         List<Test> pendingTests = new ArrayList<>(this.testSuites);
         Map<String, TestState> executedTests = new HashMap<>();
-        int numExecuted;
+
+        int testsTotal = pendingTests.size(), testsExecuted = 0, testsSucceeded = 0, testsSkipped = 0;
         while(!pendingTests.isEmpty()) {
-            numExecuted = 0;
+            final int testCount = testsExecuted;
 
             tloop:
             for(Test test : new ArrayList<>(pendingTests)) {
@@ -64,33 +74,36 @@ public abstract class TestUnit {
                     if(result == TestState.PENDING)
                         continue tloop;
 
-                    if(result == TestState.FAILED) {
-                        numExecuted++;
-                        pendingTests.remove(test);
+                    if(result == TestState.FAILED || result == TestState.SKIPPED) {
+                        testsExecuted++;
+                        testsSkipped++;
 
-                        logger.info("> Skipping test " + test.getId() + " because required test previously failed (" + depend + ")");
+                        pendingTests.remove(test);
                         executedTests.put(test.getId(), TestState.SKIPPED);
                         test.setState(TestState.SKIPPED);
-                        continue tloop;
-                    }
-                    if(result == TestState.SKIPPED) {
-                        numExecuted++;
-                        pendingTests.remove(test);
 
-                        logger.info("> Skipping test " + test.getId() + " because required test has been skipped (" + depend + ")");
-                        executedTests.put(test.getId(), TestState.SKIPPED);
-                        test.setState(TestState.SKIPPED);
+                        if(result == TestState.FAILED)
+                            logger.info("> Skipping test " + test.getId() + " because required test previously failed (" + depend + ")");
+                        else
+                            logger.info("> Skipping test " + test.getId() + " because required test has been skipped (" + depend + ")");
+
                         continue tloop;
                     }
                 }
 
-                numExecuted++;
+                testsExecuted++;
                 pendingTests.remove(test);
                 this.executeTest(context, test);
                 executedTests.put(test.getId(), test.getState());
+                if(test.getState() == TestState.SUCCEEDED)
+                    testsSucceeded++;
+                else if(context.getOptions().isExitOnFailure()) {
+                    break;
+                }
             }
 
-            if(numExecuted == 0) {
+            /* Check if we haven't executed any tests */
+            if(testCount == testsExecuted) {
                 logger.error("Failed to execute all tests. May a circular dependency?");
                 logger.debug("Tests left:");
                 for(Test t : pendingTests)
@@ -100,7 +113,7 @@ public abstract class TestUnit {
         }
 
         logger.popContext(this.name);
-        return true;
+        return new Result(testsTotal, testsExecuted, testsSucceeded, testsSkipped);
     }
 
     private boolean executeTest(@NonNull TestContext context, @NonNull Test test) {

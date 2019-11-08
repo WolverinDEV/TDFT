@@ -134,7 +134,7 @@ class SimpleHelper implements Helpers {
     }
 
     @Override
-    public <T> void executeWithExpect(@NonNull Object obj, @NonNull String name, int modifiers, T result, Comparator<T> resultCmp, Object... arguments) {
+    public <T> void executeWithExpect(@NonNull Object obj, @NonNull String name, int modifiers, T result, ResultComparator<T> resultCmp, Object... arguments) {
         Class<?>[] args = Stream.of(arguments).map(Object::getClass).toArray(Class<?>[]::new);
         Method m = this.resolveMethod(obj.getClass(), name, modifiers, result == Void.TYPE ? void.class : result.getClass(), args);
 
@@ -142,7 +142,7 @@ class SimpleHelper implements Helpers {
     }
 
     @Override
-    public <T> void executeWithExpect(@NonNull Object obj, @NonNull Method method, T result, Comparator<T> resultCmp, Object... arguments) {
+    public <T> void executeWithExpect(@NonNull Object obj, @NonNull Method method, T result, ResultComparator<T> resultCmp, Object... arguments) {
         Object res;
         try {
             res = method.invoke(obj, (Object[]) arguments);
@@ -171,12 +171,11 @@ class SimpleHelper implements Helpers {
     }
 
     @Override
-    public void ensureImplements(@NonNull Class<?> klass, Class<?> other) {
+    public void ensureImplements(@NonNull Class<?> klass, @NonNull Class<?> other) {
         if(other == Object.class)
             return;
 
         final Class<?> orgKlass = klass;
-        List<Class<?>> interfaces = new ArrayList<>();
         while(klass != Object.class) {
             for(Class interf : klass.getInterfaces()) {
                 while(interf != Object.class && interf.isInterface()) {
@@ -189,5 +188,19 @@ class SimpleHelper implements Helpers {
             klass = klass.getSuperclass();
         }
         throw new RuntimeException("Class " + orgKlass.getName() + " does not implement " + other.getName());
+    }
+
+    @Override
+    public void ensureExtends(@NonNull Class<?> klass, @NonNull Class<?> other) {
+        if(other == Object.class)
+            return;
+
+        final Class<?> orgKlass = klass;
+        while(klass != Object.class) {
+            if(klass == other)
+                return;
+            klass = klass.getSuperclass();
+        }
+        throw new RuntimeException("Class " + orgKlass.getName() + " does not extends " + other.getName());
     }
 }
