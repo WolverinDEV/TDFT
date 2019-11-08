@@ -32,7 +32,6 @@ Do you have any more ideas to test? May consider to contribute :)
 :heavy_plus_sign: := Work in progress  
 :heavy_multiplication_x: := Currently not supported  
 
-## Features to come
-[ ] GUI  
-[ ] MacOS and Windows support (Currently not supported due to the `cd` command)  
-[ ] Releases  
+## Planned features
+- MacOS support (Currently partial supported)  
+  Frameworks like the FUPBot will not work properly
