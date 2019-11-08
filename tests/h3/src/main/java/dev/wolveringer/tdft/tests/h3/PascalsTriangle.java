@@ -72,13 +72,9 @@ public class PascalsTriangle extends TestUnit  {
                     //Arrays.equals(a, b) ? 0 : -1
                     if(Arrays.equals(a, b)) {
                         /* Arrays match, but they should not match for triangleOfBinCoeff because BinCoeff cant handle that large numbers */
-                        if(pair.getKey() <= 12)
-                            return 0;
-                        return -1;
+                        return pair.getKey() <= 12;
                     } else {
-                        if(pair.getKey() <= 12)
-                            return -1;
-                        return 0;
+                        return pair.getKey() > 12;
                     }
                 }, pair.getKey());
         }, "triangleOfBinCoeff functionality test").requireTest(methodAvail);
@@ -98,7 +94,7 @@ public class PascalsTriangle extends TestUnit  {
             Method m = helpers.resolveMethod(pt, "pascalsTriangle", Modifier.PUBLIC, Integer[].class, int.class);
 
             for(Map.Entry<Integer, Integer[]> pair : pascTriTestSet.entrySet())
-                helpers.executeWithExpect(pt, m, pair.getValue(), (a, b) -> Arrays.equals(a, b) ? 0 : -1, pair.getKey());
+                helpers.executeWithExpect(pt, m, pair.getValue(), Arrays::equals, pair.getKey());
         }, "pascalsTriangle functionality test").requireTest(methodAvail);
     }
 

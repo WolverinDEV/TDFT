@@ -16,5 +16,6 @@ public class PluginH3 extends Plugin {
     @Override
     public void onEnable() {
         this.registerTestUnit(PascalsTriangle.class);
+        this.registerTestUnit(Dogs.class);
     }
 }
