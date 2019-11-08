@@ -22,8 +22,9 @@ Do you have any more ideas to test? May consider to contribute :)
 | H00 | | :heavy_multiplication_x: | |
 | H01 | | :heavy_multiplication_x: | |
 | H02 | | :heavy_multiplication_x: | |
-| H03 | Pascals Triangle | :heavy_plus_sign: | Already checking for method,  but not yet for their functionality (only for `faculty`) |
-|  | Heritage Tests | :heavy_multiplication_x: | |
+| H03 | Pascals Triangle | :heavy_check_mark: | |
+|  | Dog heritage | :heavy_check_mark: | |
+|  | Dog functionality | :heavy_check_mark: | |
 | H04 | | :heavy_multiplication_x: | |
   
 :heavy_check_mark: := Fully supported  
@@ -33,5 +34,4 @@ Do you have any more ideas to test? May consider to contribute :)
 ## Features to come
 [ ] GUI  
 [ ] MacOS and Windows support (Currently not supported due to the `cd` command)  
-[ ] Fully implement H03  
 [ ] Releases  
