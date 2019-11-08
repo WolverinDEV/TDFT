@@ -45,10 +45,14 @@ function package_cli() {
     exit 1
   }
 
-  zip -r out/TDFT-CLI.zip TDFT/* || {
-    echo "Failed to create ZIP archive"
-    exit 1
-  }
+  if [[ $(uname -a | grep "MINGW") ]]; then
+    powershell -Command "Compress-Archive -Path TDFT/* -CompressionLevel Fastest -DestinationPath out/TDFT-CLI"
+  else
+    zip -r out/TDFT-CLI.zip TDFT/* || {
+      echo "Failed to create ZIP archive"
+      exit 1
+    }
+  fi
 }
 
 function package_gui() {
@@ -58,10 +62,14 @@ function package_gui() {
     exit 1
   }
 
-  zip -r out/TDFT-GUI.zip TDFT/* || {
-    echo "Failed to create ZIP archive"
-    exit 1
-  }
+  if [[ $(uname -a | grep "MINGW") ]]; then
+    powershell -Command "Compress-Archive -Path TDFT/* -CompressionLevel Fastest -DestinationPath out/TDFT-GUI"
+  else
+    zip -r out/TDFT-GUI.zip TDFT/* || {
+      echo "Failed to create ZIP archive"
+      exit 1
+    }
+  fi
 }
 
 if [[ -d "out" ]]; then
