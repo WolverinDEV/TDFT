@@ -24,4 +24,6 @@ public interface Helpers {
     default <T> void executeV(@NonNull Object obj, @NonNull String name, int modifiers, T result, Comparator<T> resultCmp, Object... arguments) {
         this.executeWithExpect(obj, name, modifiers, Void.TYPE, (a, b) -> 0, arguments);
     }
+
+    void ensureImplements(@NonNull Class<?> klass, Class<?> other);
 }
