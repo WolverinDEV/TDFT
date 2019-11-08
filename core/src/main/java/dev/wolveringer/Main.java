@@ -54,6 +54,22 @@ public class Main {
                             .desc("Specify plugins or full directories where the tester loads his tests from")
                             .build()
             );
+
+            cliOptions.addOption(
+                    Option.builder("s")
+                            .longOpt("printStackTrace")
+                            .optionalArg(true)
+                            .desc("Optionally print the stack trace when an error occurs")
+                            .build()
+            );
+
+            cliOptions.addOption(
+                    Option.builder("a")
+                            .longOpt("abortOnFailure")
+                            .optionalArg(true)
+                            .desc("Abort all tests on failure")
+                            .build()
+            );
         }
 
         CommandLineParser parser = new DefaultParser();
@@ -72,8 +88,8 @@ public class Main {
         TestSource source = new EclipseProjectSource(cmd.getOptionValue("project"));
         TestOptions options = new TestOptions();
 
-        options.setExitOnFailure(false);
-        options.setFullStackTrace(false);
+        options.setExitOnFailure(cmd.hasOption("abortOnFailure"));
+        options.setFullStackTrace(cmd.hasOption("printStackTrace"));
 
         PluginManager unitManager = new PluginManager();
 
