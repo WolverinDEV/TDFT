@@ -15,6 +15,6 @@ public class PluginH4 extends Plugin {
 
     @Override
     public void onEnable() {
-        //TODO
+        this.registerTestUnit(Matrix.class);
     }
 }
