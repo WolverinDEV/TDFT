@@ -58,7 +58,7 @@ public abstract class TestUnit {
     public final Result executeTests(@NonNull TestContext context) {
         TestLogger logger = context.getLogger();
         logger.pushContext(this.name);
-        logger.info("Executing %d tests in this unit.", this.testSuites.size());
+        logger.info("Executing %d tests in unit %s.", this.testSuites.size(), this.getName());
 
         List<Test> pendingTests = new ArrayList<>(this.testSuites);
         Map<String, TestState> executedTests = new HashMap<>();

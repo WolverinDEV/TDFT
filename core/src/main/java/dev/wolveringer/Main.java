@@ -9,14 +9,12 @@ import dev.wolveringer.tdft.source.EclipseProjectSource;
 import dev.wolveringer.tdft.source.TestSource;
 import org.apache.commons.cli.*;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.impl.SimpleLogger;
 
 import java.io.File;
 import java.text.DecimalFormat;
-import java.util.Arrays;
 
 public class Main {
     private static final Logger logger;
@@ -86,7 +84,7 @@ public class Main {
         executor.initialize();
 
         TestResult result = executor.execute();
-        printTestResult(result);
+        result.print(System.out::println);
 
         if(!result.successfully()) {
             System.out.println("Test wasn't successfully!");
@@ -97,28 +95,5 @@ public class Main {
         System.out.println("All tests have been passed. Great!");
         System.out.println("Do you have any more ideas to test? May consider to contribute :)");
         System.exit(0);
-    }
-
-    private static String formantPer(int a, int b, boolean withOf) {
-        float p = (float) (a * 100) / b;
-        DecimalFormat decimalFormat = new DecimalFormat("#0.0");
-        String app = "(" + decimalFormat.format(p);
-        app = StringUtils.leftPad(app, 7, ' ');
-        app += "%)";
-
-        String sa = StringUtils.leftPad(a + "", 3, ' ');
-        String sb = StringUtils.leftPad(b + "", 3, ' ');
-        if(withOf)
-            return sa + " of " + sb + app;
-        return sa + "       " + app;
-    }
-
-    private static void printTestResult(TestResult result) {
-        logger.info("Test summery:");
-        logger.info("  Test units executed: " + formantPer(result.getTestUnitsAvailable(), result.getTestUnitsTotal(), true));
-        logger.info("  Tests executed     : " + formantPer(result.getTestsExecuted(), result.getTestsAvailable(), true));
-        logger.info("    Succeeded        : " + formantPer(result.getTestsSucceeded(), result.getTestsExecuted(), false));
-        logger.info("    Failed           : " + formantPer(result.getFailedTests(), result.getTestsExecuted(), false));
-        logger.info("    Skipped          : " + formantPer(result.getTestsSkipped(), result.getTestsExecuted(), false));
     }
 }

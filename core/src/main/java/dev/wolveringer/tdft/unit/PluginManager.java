@@ -43,6 +43,10 @@ public class PluginManager {
         this.pluginFiles.add(path);
     }
 
+    public boolean initialized() {
+        return this.pluginInstances != null;
+    }
+
     public void initialize() {
         Validate.isTrue(this.pluginInstances == null, "Plugin manager has already been initialized!");
         this.pluginInstances = new ArrayList<>();

@@ -8,6 +8,7 @@ import dev.wolveringer.tdft.unit.PluginManager;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,34 +21,11 @@ import java.util.stream.Collectors;
 public class TestExecutor {
     private static final Logger logger = LoggerFactory.getLogger(TestExecutor.class);
 
-    @RequiredArgsConstructor
-    private static class SimpleLogger implements TestLogger {
+    private static class SimpleLogger extends AbstractTestLogger {
         private static final Logger logger = LoggerFactory.getLogger(SimpleLogger.class);
 
-        @NonNull private final TestExecutor handle;
-        private List<String> contextStack = new ArrayList<>();
-        private String context = "";
-
-        private void generateContext() {
-            if(this.contextStack.isEmpty())
-                this.context = "";
-            else
-                this.context = this.contextStack.stream().collect(Collectors.joining("::", "[", "]"));
-        }
-
-        @Override
-        public void pushContext(String name) {
-            this.contextStack.add(name);
-            this.generateContext();
-        }
-
-        @Override
-        public void popContext(String expectedName) {
-            Validate.isTrue(!this.context.isEmpty(), "Context stack is empty");
-            String givenName = this.contextStack.remove(this.contextStack.size() - 1);
-            this.generateContext();
-
-            Validate.isTrue(givenName.equals(expectedName), "Expected context name is not equals to the given name (" + givenName +" != " + expectedName + ")");
+        public SimpleLogger(@NonNull TestExecutor handle) {
+            super(handle);
         }
 
         @Override
@@ -91,20 +69,23 @@ public class TestExecutor {
     @NonNull private final TestOptions options;
 
     private TestContext context;
-    private TestLogger testLogger;
+    @Setter private TestLogger testLogger;
     private Helpers helper;
 
     public void initialize() throws Exception {
-        this.testLogger = new SimpleLogger(this);
+        if(this.testLogger == null)
+            this.testLogger = new SimpleLogger(this);
 
         try {
-            this.unitManager.initialize();
+            if(!this.unitManager.initialized())
+                this.unitManager.initialize();
         } catch (Exception ex) {
             throw new Exception("failed to initialize test unit manager", ex);
         }
 
         try {
-            this.source.initialize();
+            if(!this.source.initialized())
+                this.source.initialize();
         } catch (Exception ex) {
             throw new Exception("failed to initialize test source", ex);
         }
@@ -146,6 +127,7 @@ public class TestExecutor {
         int testUnitsTotal = 0, testUnitsAvailable = 0;
         int testsAvailable = 0, testsExecuted = 0, testsSucceeded = 0, testsSkipped = 0;
 
+        List<TestUnit> registeredTestUnits = new ArrayList<>();
         List<TestUnit> availableTestUnits = new ArrayList<>();
         for(Plugin tp : this.unitManager.loadedPlugins()) {
             logger.debug("Loading units for plugin " + tp.getName());
@@ -162,10 +144,11 @@ public class TestExecutor {
                     try {
                         unit.initialize(this.getOrGenerateContext());
                         availableTestUnits.add(unit);
+                        registeredTestUnits.add(unit);
                         testsAvailable += unit.getTestSuites().size();
                     } catch(Exception ex) {
                         unit.cleanup();
-                        logger.error("Failed to initialize test unit " + unit.getName() + ". Ignoring unit.");
+                        logger.error("Failed to initialize test unit " + unit.getName() + ". Ignoring unit.", ex);
                     }
                 } else {
                     logger.trace("Skipping test unit " + unit.getName());
@@ -201,6 +184,9 @@ public class TestExecutor {
                 logger.error("Failed to cleanup global environment for test " + test.getName() + ". Ignoring this error.", ex);
             }
         }
+
+        for(TestUnit unit : registeredTestUnits)
+            unit.cleanup();
 
         return new TestResult(
                 testUnitsTotal,

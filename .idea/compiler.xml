@@ -9,6 +9,8 @@
         <outputRelativeToContentRoot value="true" />
         <module name="core" />
         <module name="api" />
+        <module name="h3" />
+        <module name="gui" />
         <module name="h4" />
       </profile>
     </annotationProcessing>

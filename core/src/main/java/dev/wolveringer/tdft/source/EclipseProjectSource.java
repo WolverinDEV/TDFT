@@ -60,10 +60,32 @@ public class EclipseProjectSource extends ProxyClassLoader implements TestSource
     }
 
     @Override
-    public void initialize() {
+    public void validate() throws Exception {
         File file = new File(this.filePath);
         Validate.isTrue(file.getName().endsWith(".zip"), "Source file does not end with .zip");
         Validate.isTrue(file.exists() && file.canRead(), "Source file is missing or not accessible");
+
+        try {
+            ZipFile f = new ZipFile(file);
+            f.close();
+        } catch (IOException e) {
+            throw new RuntimeException("failed to open zip archive", e);
+        }
+    }
+
+    @Override
+    public boolean initialized() {
+        return this.file != null;
+    }
+
+    @Override
+    public void initialize() {
+        File file = new File(this.filePath);
+        try {
+            this.validate();
+        } catch(Exception ex) {
+            throw new RuntimeException("project is invalid", ex);
+        }
 
         try {
             this.file = new ZipFile(file);

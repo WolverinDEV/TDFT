@@ -8,6 +8,9 @@ public interface TestSource {
      * @throws Exception An exception whill be thrown for any kind of error
      */
     void initialize() throws Exception;
+    boolean initialized();
+
+    void validate() throws Exception;
 
     /**
      * @return The project name of the supplied project.
