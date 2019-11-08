@@ -8,8 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URL;
 
 public class Native {
     private static final Logger logger = LoggerFactory.getLogger(Native.class);
@@ -19,6 +17,10 @@ public class Native {
 
     public static boolean available() {
         return supported;
+    }
+
+    static {
+        setup();
     }
 
     public static void setup() {
