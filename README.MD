@@ -25,7 +25,8 @@ Do you have any more ideas to test? May consider to contribute :)
 | H03 | Pascals Triangle | :heavy_check_mark: | |
 |  | Dog heritage | :heavy_check_mark: | |
 |  | Dog functionality | :heavy_check_mark: | |
-| H04 | | :heavy_multiplication_x: | |
+| H04 | Matrix Operations | :heavy_check_mark: | |
+|  | Pizza Factory | :heavy_plus_sign: | |
   
 :heavy_check_mark: := Fully supported  
 :heavy_plus_sign: := Work in progress  
