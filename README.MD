@@ -44,7 +44,9 @@ The tool might look like this:
 |  | Dog heritage | :heavy_check_mark: | |
 |  | Dog functionality | :heavy_check_mark: | |
 | H04 | Matrix Operations | :heavy_check_mark: | |
-|  | Pizza Factory | :heavy_plus_sign: | |
+|  | Pizza factory structure | :heavy_check_mark: | |
+|  | Pizza factory functionality | :heavy_plus_sign: | |
+|  | Pizza factory (with cheese) | :heavy_multiplication_x: | |
   
 :heavy_check_mark: := Fully supported  
 :heavy_plus_sign: := Work in progress  
