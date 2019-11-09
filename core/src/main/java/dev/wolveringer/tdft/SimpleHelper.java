@@ -9,6 +9,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -51,6 +52,19 @@ class SimpleHelper implements Helpers {
         } catch(Exception ex) {
             throw new RuntimeException("Failed to create a new instance of class " + klass.getName() + ".", ex);
         }
+    }
+
+    @Override
+    public Field resolveField(Class<?> klass, String name, int modifiers) {
+        for(Field f : klass.getDeclaredFields()) {
+            if(f.getName().equalsIgnoreCase(name)) {
+                if(modifiers >= 0) {
+                    Validate.isTrue((f.getModifiers() & modifiers) == modifiers, "Required modifiers for field " + name + " in class " + klass.getName() +" are not given (required: " + Modifier.toString(modifiers) + "; given: " + Modifier.toString(f.getModifiers()) + ")");
+                }
+                return f;
+            }
+        }
+        throw new RuntimeException("Missing field " + name + " in class " + klass.getName());
     }
 
     private boolean similarParameters(Class<?> a, Class<?> b) {

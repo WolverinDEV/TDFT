@@ -3,6 +3,7 @@ package dev.wolveringer.tdft.test;
 import dev.wolveringer.tdft.ResultComparator;
 import lombok.NonNull;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Comparator;
 
@@ -15,6 +16,11 @@ public interface Helpers {
 
     <T> T createInstance(String klass, Object... arguments);
     <T> T createInstance(Class<T> klass, Object... arguments);
+
+    Field resolveField(Class<?> klass, String name, int modifiers);
+    default Field resolveField(String klass, String name, int modifiers) {
+        return resolveField(resolveClass(klass), name, modifiers);
+    }
 
     <T> Method resolveMethod(Class<T> klass, String name, int modifiers, Class<?> result, Class<?>... arguments);
     default <T> Method resolveMethod(String className, String name, int modifiers, Class<?> result, Class<?>... arguments) {
