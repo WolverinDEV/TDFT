@@ -16,5 +16,6 @@ public class PluginH4 extends Plugin {
     @Override
     public void onEnable() {
         this.registerTestUnit(Matrix.class);
+        this.registerTestUnit(Pizza.class);
     }
 }
