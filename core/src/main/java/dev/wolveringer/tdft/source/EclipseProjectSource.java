@@ -207,13 +207,19 @@ public class EclipseProjectSource extends ProxyClassLoader implements TestSource
         while(entries.hasMoreElements()) {
             ZipEntry entry = entries.nextElement();
 
-            File targetFile = new File(this.projectRoot, entry.getName());
-            File targetDirectory = targetFile.getParentFile();
+            if(entry.isDirectory()) {
+                File targetDir = new File(this.projectRoot, entry.getName());
+                if(!targetDir.isDirectory())
+                    Validate.isTrue(targetDir.mkdirs(), "Could not create the directory path request by the archive (" + entry.getName() + ")");
+            } else {
+                File targetFile = new File(this.projectRoot, entry.getName());
+                File targetDirectory = targetFile.getParentFile();
 
-            if(!targetDirectory.isDirectory())
-                Validate.isTrue(targetDirectory.mkdirs(), "Failed to create directories for project file " + entry.getName());
+                if(!targetDirectory.isDirectory())
+                    Validate.isTrue(targetDirectory.mkdirs(), "Failed to create directories for project file " + entry.getName() + " at " + targetDirectory.getAbsolutePath());
 
-            FileUtils.copyToFile(this.file.getInputStream(entry), targetFile);
+                FileUtils.copyToFile(this.file.getInputStream(entry), targetFile);
+            }
         }
     }
 
