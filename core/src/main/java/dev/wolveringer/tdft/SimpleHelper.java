@@ -57,7 +57,7 @@ class SimpleHelper implements Helpers {
     @Override
     public Field resolveField(Class<?> klass, String name, int modifiers) {
         for(Field f : klass.getDeclaredFields()) {
-            if(f.getName().equalsIgnoreCase(name)) {
+            if(f.getName().equals(name)) {
                 if(modifiers >= 0) {
                     Validate.isTrue((f.getModifiers() & modifiers) == modifiers, "Required modifiers for field " + name + " in class " + klass.getName() +" are not given (required: " + Modifier.toString(modifiers) + "; given: " + Modifier.toString(f.getModifiers()) + ")");
                 }
