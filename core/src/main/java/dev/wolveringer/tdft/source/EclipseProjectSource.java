@@ -164,6 +164,7 @@ public class EclipseProjectSource extends ProxyClassLoader implements TestSource
         long time_begin = System.currentTimeMillis();
 
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+        Validate.notNull(compiler, "Failed to get java compiler (ToolProvider.getSystemJavaCompiler()). Please install the Java programming language compiler");
         DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
         StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, Locale.getDefault(), null);
 
