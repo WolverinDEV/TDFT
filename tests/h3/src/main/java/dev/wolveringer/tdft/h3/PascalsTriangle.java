@@ -58,14 +58,14 @@ public class PascalsTriangle extends TestUnit  {
     private void registerTriCoeffTests() {
         Test methodAvail = this.registerTest(context -> {
             context.getHelper()
-                    .resolveMethod("h3.PascalsTriangle", "triangleOfBinCoeff", Modifier.PUBLIC, Integer[].class, int.class);
+                    .resolveMethod("h3.PascalsTriangle", "triangleOfBinCoeff", Modifier.PUBLIC, int[].class, int.class);
         }, "test method availability for triangleOfBinCoeff");
 
         this.registerTest(context -> {
             final Helpers helpers = context.getHelper();
 
             Object pt = helpers.createInstance("h3.PascalsTriangle");
-            Method m = helpers.resolveMethod(pt, "triangleOfBinCoeff", Modifier.PUBLIC, Integer[].class, int.class);
+            Method m = helpers.resolveMethod(pt, "triangleOfBinCoeff", Modifier.PUBLIC, int[].class, int.class);
 
             for(Map.Entry<Integer, Integer[]> pair : pascTriTestSet.entrySet())
                 helpers.executeWithExpect(pt, m, pair.getValue(), (a, b) -> {
@@ -83,7 +83,7 @@ public class PascalsTriangle extends TestUnit  {
     private void registerPascalTests() {
         Test methodAvail = this.registerTest(context -> {
             context.getHelper()
-                    .resolveMethod("h3.PascalsTriangle", "pascalsTriangle", Modifier.PUBLIC, Integer[].class, int.class);
+                    .resolveMethod("h3.PascalsTriangle", "pascalsTriangle", Modifier.PUBLIC, int[].class, int.class);
         }, "test method availability for pascalsTriangle");
 
 
@@ -91,7 +91,7 @@ public class PascalsTriangle extends TestUnit  {
             final Helpers helpers = context.getHelper();
 
             Object pt = helpers.createInstance("h3.PascalsTriangle");
-            Method m = helpers.resolveMethod(pt, "pascalsTriangle", Modifier.PUBLIC, Integer[].class, int.class);
+            Method m = helpers.resolveMethod(pt, "pascalsTriangle", Modifier.PUBLIC, int[].class, int.class);
 
             for(Map.Entry<Integer, Integer[]> pair : pascTriTestSet.entrySet())
                 helpers.executeWithExpect(pt, m, pair.getValue(), Arrays::equals, pair.getKey());
