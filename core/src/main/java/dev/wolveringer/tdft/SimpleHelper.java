@@ -151,6 +151,15 @@ class SimpleHelper implements Helpers {
             Validate.isTrue((m.getModifiers() & modifiers) == modifiers, "Required modifiers for method " + name + " in class " + klass.getName() + " are not given (required: " + Modifier.toString(modifiers) + "; given: " + Modifier.toString(m.getModifiers()) + ")");
         }
 
+        /* check for parameter similarity and log a warning */
+        if(m.getReturnType() != result) {
+            this.context.getLogger().warning("Method " + name + " in class " + klass.getName() + " has a not correct return type. Expecting: " + result.getSimpleName() + " Got: " + m.getReturnType().getSimpleName() + ". You should may change this!");
+        }
+        for(int i = 0; i < m.getParameterCount(); i++) {
+            Class<?> paramClass = m.getParameterTypes()[i];
+            if(paramClass != arguments[i])
+                this.context.getLogger().warning("Method " + name + " in class " + klass.getName() + " has at parameter " + (i + 1) + " a not expected type. Expecting: " + arguments[i].getSimpleName() + " Got: " + paramClass.getSimpleName() + ". You should may change this!");
+        }
         return m;
     }
 
