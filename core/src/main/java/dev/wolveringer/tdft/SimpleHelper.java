@@ -171,15 +171,33 @@ class SimpleHelper implements Helpers {
         this.executeWithExpect(obj, m, result, resultCmp, arguments);
     }
 
-    private Object p2oArray(Object val){
+    private static final Map<Class<?>, Class<?>> pmapping;
+
+    static {
+        pmapping = new HashMap<>();
+        pmapping.put(byte.class, Byte.class);
+        pmapping.put(char.class, Character.class);
+        pmapping.put(short.class, Short.class);
+        pmapping.put(int.class, Integer.class);
+        pmapping.put(long.class, Long.class);
+
+        pmapping.put(float.class, Float.class);
+        pmapping.put(double.class, Double.class);
+    }
+
+    private Object p2oArray(Object val) {
         if(val == null || !val.getClass().isArray())
             return val;
 
         if (val instanceof Object[])
             return (Object[])val;
 
+        Class<?> base = val.getClass().getComponentType();
+        while(base.isArray()) base = base.getComponentType();
+        Validate.isTrue(pmapping.containsKey(base), "Failed to execute p2o array mapping");
+
         int len = Array.getLength(val);
-        Object[] res = new Object[len];
+        Object[] res = (Object[]) Array.newInstance(pmapping.get(base), Array.getLength(val));
         for(int i = 0; i < len; ++i)
             res[i] = p2oArray(Array.get(val, i));
         return res;
