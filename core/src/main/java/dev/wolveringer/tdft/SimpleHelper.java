@@ -9,6 +9,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -161,6 +162,20 @@ class SimpleHelper implements Helpers {
         this.executeWithExpect(obj, m, result, resultCmp, arguments);
     }
 
+    private Object p2oArray(Object val){
+        if(val == null || !val.getClass().isArray())
+            return val;
+
+        if (val instanceof Object[])
+            return (Object[])val;
+
+        int len = Array.getLength(val);
+        Object[] res = new Object[len];
+        for(int i = 0; i < len; ++i)
+            res[i] = p2oArray(Array.get(val, i));
+        return res;
+    }
+
     @Override
     public <T> void executeWithExpect(@NonNull Object obj, @NonNull Method method, T result, ResultComparator<T> resultCmp, Object... arguments) {
         Object res;
@@ -173,6 +188,7 @@ class SimpleHelper implements Helpers {
         if(result != Void.TYPE) {
             T cr;
             try {
+                res = p2oArray(res);
                 cr = (T) res;
             } catch(ClassCastException ex) {
                 throw new RuntimeException("Result is not the expected type!", ex);

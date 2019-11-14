@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.impl.SimpleLogger;
 
 import java.io.File;
+import java.util.Arrays;
 
 public class Main {
     private static final Logger logger;
