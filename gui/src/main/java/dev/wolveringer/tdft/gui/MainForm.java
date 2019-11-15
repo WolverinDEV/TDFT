@@ -34,7 +34,7 @@ public class MainForm {
     private JPanel mainPanel;
     private JLabel labelSelectedFile;
     private JLabel labelProjectError;
-    private JCheckBox exitTestsOnFailitureCheckBox;
+    private JCheckBox exitTestsOnFailureCheckBox;
     private JCheckBox printFullStackTraceCheckBox;
     private JButton addButton;
     private JButton removeButton;
@@ -154,8 +154,8 @@ public class MainForm {
         });
         this.removeButton.setEnabled(false);
 
-        this.exitTestsOnFailitureCheckBox.addItemListener(e -> {
-            this.options.setExitOnFailure(this.exitTestsOnFailitureCheckBox.isSelected());
+        this.exitTestsOnFailureCheckBox.addItemListener(e -> {
+            this.options.setExitOnFailure(this.exitTestsOnFailureCheckBox.isSelected());
         });
 
         this.printFullStackTraceCheckBox.addItemListener(e -> {
@@ -167,7 +167,7 @@ public class MainForm {
 
     public void syncOptions() {
         this.printFullStackTraceCheckBox.setSelected(this.options.isFullStackTrace());
-        this.exitTestsOnFailitureCheckBox.setSelected(this.options.isExitOnFailure());
+        this.exitTestsOnFailureCheckBox.setSelected(this.options.isExitOnFailure());
     }
 
     public void setProjectFile(File target) {
@@ -291,9 +291,9 @@ public class MainForm {
         tabbedPane1.addTab("Options", panel4);
         final Spacer spacer3 = new Spacer();
         panel4.add(spacer3, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        exitTestsOnFailitureCheckBox = new JCheckBox();
-        exitTestsOnFailitureCheckBox.setText("Exit tests on failiture");
-        panel4.add(exitTestsOnFailitureCheckBox, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        exitTestsOnFailureCheckBox = new JCheckBox();
+        exitTestsOnFailureCheckBox.setText("Exit tests on failure");
+        panel4.add(exitTestsOnFailureCheckBox, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         printFullStackTraceCheckBox = new JCheckBox();
         printFullStackTraceCheckBox.setText("Print full stack trace on error");
         panel4.add(printFullStackTraceCheckBox, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
