@@ -142,12 +142,12 @@
                           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                         </constraints>
                       </vspacer>
-                      <component id="cf82f" class="javax.swing.JCheckBox" binding="exitTestsOnFailitureCheckBox" default-binding="true">
+                      <component id="cf82f" class="javax.swing.JCheckBox" binding="exitTestsOnFailureCheckBox" default-binding="true">
                         <constraints>
                           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
-                          <text value="Exit tests on failiture"/>
+                          <text value="Exit tests on failure"/>
                         </properties>
                       </component>
                       <component id="6104e" class="javax.swing.JCheckBox" binding="printFullStackTraceCheckBox" default-binding="true">
