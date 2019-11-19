@@ -36,6 +36,13 @@ function install_plugins() {
     echo "Failed to copy H03 plugin"
     exit 1
   }
+
+  #Grep the H4 plugin
+  resolve_latest ../tests/h4/target/ h4
+  cp "${file}" TDFT/plugins/H04.jar || {
+    echo "Failed to copy H04 plugin"
+    exit 1
+  }
 }
 
 function package_cli() {
